@@ -2,17 +2,12 @@ package com.feith.jar.starter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Scanner;
-
-import com.google.common.base.Strings;
 
 public class Main
 {
@@ -20,19 +15,21 @@ public class Main
     {
         String delimiter = args[0];
         String fileToReadPath = args[1];
-        String fileToWritePath = args[2];
+        String printToFilePath = args[2];
 
         File fileToRead = new File( fileToReadPath );
+        File fileToWrite = new File( printToFilePath );
 
         try ( Scanner scannerToRead = new Scanner( fileToRead );
-                FileWriter fileToWrite = new FileWriter( fileToWritePath ); )
-        {
+                PrintStream printToFile = new PrintStream( fileToWrite ) )
 
+        {
             String oneString = scannerToRead.useDelimiter( delimiter ).next();
-            
+
             System.out.println( "oneString" + oneString );
+
             String[] splitString = oneString.split( "\\n" );
-            
+
             System.out.println( splitString );
 
             for ( int i = 0; i < splitString.length; i++ )
@@ -41,7 +38,7 @@ public class Main
                 if ( splitString[i].startsWith( "CASEID: " ) )
                 {
                     String visit_number = splitString[i].substring( 8, splitString[i].length() );
-                    fileToWrite.append( "field001: " + visit_number );
+                    printToFile.println( "field001: " + visit_number );
                 }
 
                 if ( splitString[i].startsWith( "VISIT DATES: " ) )
@@ -50,7 +47,7 @@ public class Main
                     String[] dateString = splitString[i].split( " - " );
                     String fromDateString = dateString[0].substring( 13, dateString[0].length() );
                     String toDateString = dateString[1].substring( 0, dateString[1].length() );
-                  
+
                     try
                     {
                         String pattern = "MM/dd/yyyy";
@@ -58,18 +55,27 @@ public class Main
 
                         Date rawFromDate = new SimpleDateFormat( "dd MMM yyyy" ).parse( fromDateString );
                         String formattedFromDate = dateFormat.format( rawFromDate );
-                        
+
                         Date rawToDate = new SimpleDateFormat( "dd MMM yyyy" ).parse( toDateString );
                         String formattedToDate = dateFormat.format( rawToDate );
-                        
-                        fileToWrite.append( "field004: " + formattedFromDate );
-                        fileToWrite.append( "field005: " + formattedToDate );
-                        
+
+                        printToFile.println( "field004: " + formattedFromDate );
+                        printToFile.println( "field005: " + formattedToDate );
                     } catch ( ParseException e )
                     {
                         e.printStackTrace();
                     }
                 }
+
+                if ( splitString[i].startsWith( "KNOWLEDGEABLE PERSON PHONE: " ) )
+                {
+                    int startSubstring = splitString[i].indexOf( "VISIT POINT OF CONTACT: " ) + 24;
+                    int endSubstring = splitString[i].indexOf( "VISIT POINT OF CONTACT PHONE: " );
+
+                    String poc = splitString[i].substring( startSubstring, endSubstring );
+                    printToFile.println( "field006: " + poc );
+                }
+
             }
         } catch ( FileNotFoundException e )
         {
@@ -77,8 +83,6 @@ public class Main
         }
     }
 }
-
-
 
 //"field000: "   10,     "List_Date"
 //"field001: "   30,     "Visit_Number"
@@ -103,11 +107,3 @@ public class Main
 //"field020: "   50,     "POB"
 //"field021: "   50,     "Nationality"
 //"field022: "   20,     "Passport_ID"
-
-
-
-
-
-
-
-
