@@ -25,20 +25,19 @@ public class Main
 
         {
             String oneString = scannerToRead.useDelimiter( delimiter ).next();
-
             System.out.println( "oneString" + oneString );
-
             String[] splitString = oneString.split( "\\n" );
-
-            System.out.println( splitString );
 
             for ( int i = 0; i < splitString.length; i++ )
             {
 
-                if ( splitString[i].startsWith( "CASEID: " ) )
+                if ( splitString[i].startsWith( "CASEID: " ) || splitString[i].startsWith( "VISIT TYPE: " )
+                        || splitString[i].startsWith( "FACILITY: " ) )
+
                 {
-                    String visit_number = splitString[i].substring( 8, splitString[i].length() );
-                    printToFile.println( "field001: " + visit_number );
+                    int startString = splitString[i].indexOf( ": " ) + 2;
+                    String fieldValue = splitString[i].substring( startString, splitString[i].length() );
+                    printToFile.println( "field00" + i + ": " + fieldValue );
                 }
 
                 if ( splitString[i].startsWith( "VISIT DATES: " ) )
@@ -69,13 +68,29 @@ public class Main
 
                 if ( splitString[i].startsWith( "KNOWLEDGEABLE PERSON PHONE: " ) )
                 {
-                    int startSubstring = splitString[i].indexOf( "VISIT POINT OF CONTACT: " ) + 24;
-                    int endSubstring = splitString[i].indexOf( "VISIT POINT OF CONTACT PHONE: " );
+                    int startPOC = splitString[i].indexOf( "VISIT POINT OF CONTACT: " ) + 24;
+                    int endPOC = splitString[i].indexOf( "VISIT POINT OF CONTACT PHONE: " );
 
-                    String poc = splitString[i].substring( startSubstring, endSubstring );
+                    String poc = splitString[i].substring( startPOC, endPOC );
                     printToFile.println( "field006: " + poc );
+
+                    int startPOCPhone = splitString[i].indexOf( "VISIT POINT OF CONTACT PHONE: " ) + 30;
+
+                    String pocPhone = splitString[i].substring( startPOCPhone );
+                    printToFile.println( "field007: " + pocPhone );
+
                 }
 
+                if ( splitString[i].startsWith( "CITY" ) )
+                {
+                    int startCity = 5;
+                    int endCity = splitString[i].indexOf( "STATE: " ) - 1;
+
+                    String city = splitString[i].substring( startCity, endCity );
+                    
+                    int startState = city.length();
+                    int endState = splitString[]
+                }
             }
         } catch ( FileNotFoundException e )
         {
