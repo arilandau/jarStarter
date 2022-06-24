@@ -31,16 +31,16 @@ public class Main
             for ( int i = 0; i < splitString.length; i++ )
             {
 
-                if ( splitString[i].startsWith( "CASEID: " ) || splitString[i].startsWith( "VISIT TYPE: " )
-                        || splitString[i].startsWith( "FACILITY: " ) )
+                if ( splitString[i].startsWith( "CASEID:" ) || splitString[i].startsWith( "VISIT TYPE:" )
+                        || splitString[i].startsWith( "FACILITY:" ) )
 
                 {
                     int startString = splitString[i].indexOf( ": " ) + 2;
                     String fieldValue = splitString[i].substring( startString, splitString[i].length() );
-                    printToFile.println( "field00" + i + ": " + fieldValue );
+                    printToFile.println( "field" + i + ": " + fieldValue );
                 }
 
-                if ( splitString[i].startsWith( "VISIT DATES: " ) )
+                if ( splitString[i].startsWith( "VISIT DATES:" ) )
                 {
                     System.out.println( "dateString:" + splitString[i] );
                     String[] dateString = splitString[i].split( " - " );
@@ -58,38 +58,53 @@ public class Main
                         Date rawToDate = new SimpleDateFormat( "dd MMM yyyy" ).parse( toDateString );
                         String formattedToDate = dateFormat.format( rawToDate );
 
-                        printToFile.println( "field004: " + formattedFromDate );
-                        printToFile.println( "field005: " + formattedToDate );
+                        printToFile.println( "field" + i + ": " + formattedFromDate );
+                        printToFile.println( "field" + i + ": " + formattedToDate );
                     } catch ( ParseException e )
                     {
                         e.printStackTrace();
                     }
                 }
 
-                if ( splitString[i].startsWith( "KNOWLEDGEABLE PERSON PHONE: " ) )
+                if ( splitString[i].startsWith( "KNOWLEDGEABLE PERSON PHONE:" ) )
                 {
-                    int startPOC = splitString[i].indexOf( "VISIT POINT OF CONTACT: " ) + 24;
-                    int endPOC = splitString[i].indexOf( "VISIT POINT OF CONTACT PHONE: " );
+                    int startPOC = splitString[i].indexOf( "VISIT POINT OF CONTACT:" ) + 24;
+                    int endPOC = splitString[i].indexOf( "VISIT POINT OF CONTACT PHONE:" );
 
                     String poc = splitString[i].substring( startPOC, endPOC );
-                    printToFile.println( "field006: " + poc );
+                    printToFile.println( "field" + i + ": " + poc );
 
-                    int startPOCPhone = splitString[i].indexOf( "VISIT POINT OF CONTACT PHONE: " ) + 30;
+                    int startPOCPhone = splitString[i].indexOf( "VISIT POINT OF CONTACT PHONE:" ) + 30;
 
                     String pocPhone = splitString[i].substring( startPOCPhone );
-                    printToFile.println( "field007: " + pocPhone );
+                    printToFile.println( "field" + i + ": " + pocPhone );
 
                 }
 
-                if ( splitString[i].startsWith( "CITY" ) )
+                if ( splitString[i].startsWith( "CITY:" ) )
                 {
-                    int startCity = 5;
-                    int endCity = splitString[i].indexOf( "STATE: " ) - 1;
+                    int startCity = 6;
+                    int endCity = splitString[i].indexOf( "STATE:" ) - 1;
 
                     String city = splitString[i].substring( startCity, endCity );
-                    
-                    int startState = city.length();
-                    int endState = splitString[]
+
+                    int startState = splitString[i].indexOf( "STATE:" ) + 7;
+                    int endState = splitString[i].indexOf( "ZIP:" ) - 1;
+
+                    String state = splitString[i].substring( startState, endState );
+
+                    int startZIP = splitString[i].indexOf( "ZIP:" ) + 5;
+
+                    String ZIP = splitString[i].substring( startZIP );
+
+                    printToFile.println( "field" + i + ": " + city );
+                    printToFile.println( "field" + i + ": " + state );
+                    printToFile.println( "field" + i + ": " + ZIP );
+                }
+
+                if ( splitString[i].startsWith( "PURPOSE OF VISIT:" ) )
+                {
+                    System.out.println( "LINEEEEE:" + splitString[i] );
                 }
             }
         } catch ( FileNotFoundException e )
